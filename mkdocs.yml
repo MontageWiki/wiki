@@ -1,0 +1,112 @@
+# ==========================================================================
+# 1. 项目基础信息
+# ==========================================================================
+site_name: 蒙太奇字幕百科 | MontageWiki
+site_description: 一本众创、共建、同享的字幕百科。
+site_author: MontageWiki Community
+site_url: https://montagewiki.github.io/
+edit_uri: https://github.com/MontageWiki/wiki/wiki/
+
+# ==========================================================================
+# 2. 主题配置 (Material Theme)
+# ==========================================================================
+theme:
+  name: material
+  custom_dir: docs/site/overrides  # main.html
+  language: zh
+  logo: site/assets/montagesubs_logo-512.jpg
+  favicon: site/assets/favicon.ico
+  
+  font:
+    text: Roboto
+    code: Roboto Mono
+    
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.tracking
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tooltips
+    
+  hide:
+    - footer.powered
+
+  # 调色板：支持自动/手动切换深色模式
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: 跟随系统模式
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: white
+      accent: indigo
+      toggle:
+        icon: material/weather-sunny
+        name: 切换至深色模式
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: grey
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: 切换至日间模式
+
+# ==========================================================================
+# 3. 插件系统
+# ==========================================================================
+plugins:
+  - search:
+      lang:
+        - en
+        - zh
+      prebuild_index: true
+      pipeline: []
+      indexing: 'full'
+      separator: '[\s\-\.\u200b\uff0c\u3002\uff01\u3001\uff1f]+'
+# ==========================================================================
+# 4. Markdown 扩展增强
+# ==========================================================================
+markdown_extensions:
+  - md_in_html
+  - admonition
+  - footnotes
+  - attr_list
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.magiclink
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:pymdownx.emoji.twemoji
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+
+# ==========================================================================
+# 5. 样式与全局变量
+# ==========================================================================
+extra_css:
+  - site/stylesheets/extra.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://montagesubs.github.io
+    - icon: fontawesome/solid/paper-plane
+      link: https://t.me/s/MTSubs
+    - icon: fontawesome/brands/weibo
+      link: https://weibo.com/u/8358891788
+    - icon: fontawesome/brands/bluesky
+      link: https://bsky.app/profile/montagesubs.bsky.social
+
+# ==========================================================================
+# 6. 页脚与导航
+# ==========================================================================
+copyright: |
+  Copyright &copy; 2026 <a href="https://montagesubs.github.io">MontageSubs</a>
+
+nav:
+  - 首页: index.md
+  - 新增条目: https://github.com/login?return_to=https%3A//github.com/MontageWiki/wiki/wiki/_new
