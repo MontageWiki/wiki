@@ -1,0 +1,50 @@
+name: "Deploy: Encyclopedia Static Site"
+
+on:
+  push:
+    branches:
+      - infra          # 监听 infra 分支变动
+    paths:
+      - 'mkdocs.yml'   # 当配置文件修改时触发
+      - 'docs/**'      # 当文档内容修改时触发
+  workflow_dispatch:   # 允许手动触发
+
+# 并发控制：防止多个构建任务冲突
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy (MkDocs Material)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: infra
+          fetch-depth: 0 # 获取完整历史以生成“最后更新时间”
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # 安装 Material 主题 (已包含 pymdown-extensions 等核心扩展)
+          pip install mkdocs-material jieba
+          
+          # 如果你在 mkdocs.yml 的 plugins 中启用了 git-revision-date-localized
+          # 请取消下面这行的注释：
+          # pip install mkdocs-git-revision-date-localized-plugin
+
+      - name: Build and Push to GitHub Pages
+        run: |
+          # --clean: 清理旧文件
+          # --verbose: 输出详细日志方便调试
+          python -m mkdocs gh-deploy --force --clean --verbose
