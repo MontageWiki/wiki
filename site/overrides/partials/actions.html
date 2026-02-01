@@ -5,18 +5,13 @@
 {% set target_edit_url = repo_url ~ "/" ~ wiki_page ~ "/_edit" %}
 {% set login_edit_url = "https://github.com/login?return_to=" ~ (target_edit_url | urlencode) %}
 
-{# 2. 结构层 #}
-{# 增加 id 以提高 CSS 权重，彻底接管容器 #}
-<div id="custom-wiki-actions" class="md-content__actions" data-search-ignore aria-hidden="true">
-  
-  {# 编辑弹出层 #}
+<div class="md-content__actions gh-actions-wrapper" data-search-ignore aria-hidden="true">
+  {# 编辑层 #}
   <details class="gh-popover-container">
-    <summary class="gh-btn-reset" title="贡献与编辑">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-        <path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1-1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path>
-      </svg>
+    <summary class="gh-icon-clear" title="贡献与编辑">
+      {# 这里的 SVG 保持不变 #}
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1-1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
     </summary>
-
     <div class="gh-popover-panel">
       <div class="gh-popover-card">
         <div class="gh-popover-header">
@@ -35,132 +30,113 @@
     </div>
   </details>
 
-  {# 历史按钮 #}
-  <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="gh-btn-reset">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-      <path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path>
-    </svg>
+  {# 历史链接 #}
+  <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="gh-icon-clear">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
   </a>
 </div>
 
-{# 3. 样式层 #}
 <style>
-  /* 1. 强力清除：隐藏所有 Material 原生的 actions 内容（包括那个讨厌的编辑图标和折叠按钮） */
-  #custom-wiki-actions > a:not(.gh-btn-reset),
-  #custom-wiki-actions > button,
-  #custom-wiki-actions .md-icon {
+  /* 1. 暴力隐藏一切原生插入的干扰项 */
+  .gh-actions-wrapper > a:not(.gh-icon-clear),
+  .gh-actions-wrapper > button,
+  .gh-actions-wrapper .md-icon {
     display: none !important;
+    opacity: 0 !important;
+    width: 0 !important;
+    position: absolute !important;
   }
 
-  /* 2. 容器接管：消除 Material 默认给 .md-content__actions 带来的矩形框边衬和背景 */
-  #custom-wiki-actions.md-content__actions {
+  /* 2. 重置容器：抹除 Material 的矩形背景和内边距 */
+  .md-content__actions.gh-actions-wrapper {
+    all: unset !important;
+    display: flex !important;
+    gap: 12px !important;
+    float: right !important;
+    margin-top: 4px !important;
+    position: relative !important;
+    z-index: 10 !important;
+  }
+
+  /* 3. 彻底重置按钮和 Summary：移除那个该死的“小圆角矩形” */
+  .gh-icon-clear {
+    all: unset !important;
+    appearance: none !important;
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
     display: flex !important;
-    flex-direction: row !important;
-    gap: 16px;
-    justify-content: flex-end;
-    align-items: center;
     padding: 0 !important;
     margin: 0 !important;
-    overflow: visible !important; /* 确保弹出层不被剪裁 */
+    width: 24px !important;
+    height: 24px !important;
+    cursor: pointer !important;
+    color: var(--md-default-fg-color--light) !important;
+    transition: color 0.2s !important;
+    /* 关键：防止 Material 使用伪元素添加背景 */
+    outline: none !important;
   }
 
-  /* 3. 按钮重置：彻底杀掉 summary 和 a 的所有默认矩形框样式 */
-  .gh-btn-reset {
-    all: unset !important;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+  .gh-icon-clear::before, .gh-icon-clear::after {
+    display: none !important; /* 杀掉可能存在的 Material 悬浮圆圈 */
+  }
+
+  .gh-icon-clear svg {
     width: 20px !important;
     height: 20px !important;
-    cursor: pointer !important;
-    color: var(--md-default-fg-color--light);
-    transition: color 0.2s;
-    outline: none !important;
-    background: none !important;
-    border: none !important;
-    -webkit-tap-highlight-color: transparent;
+    fill: currentColor !important;
+    margin: auto !important;
   }
 
-  .gh-btn-reset svg {
-    width: 100%;
-    height: 100%;
-    fill: currentColor;
-    display: block;
+  .gh-icon-clear:hover {
+    color: var(--md-typeset-a-color) !important;
   }
 
-  .gh-btn-reset:hover {
-    color: var(--md-typeset-a-color);
+  /* 4. 弹出层逻辑保持一致，增强稳定性 */
+  .gh-popover-container { 
+    display: block !important; 
+    position: relative !important; 
+    list-style: none !important; 
   }
-
-  /* 4. 弹出逻辑优化 */
-  .gh-popover-container {
-    position: relative !important;
-    list-style: none !important;
-    display: block !important;
-  }
-
-  .gh-popover-container summary::-webkit-details-marker,
-  .gh-popover-container summary::after { 
-    display: none !important; /* 彻底杀掉可能的折叠箭头 */
-  }
+  .gh-popover-container summary::-webkit-details-marker { display: none !important; }
 
   .gh-popover-panel {
     position: absolute;
     top: 100%;
     right: -4px;
-    margin-top: 12px;
+    margin-top: 8px;
     width: 280px;
     z-index: 1000;
-    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.15));
     cursor: default;
-    pointer-events: auto;
   }
 
-  /* 面板内部样式 - 保持 GitHub 风格 */
   .gh-popover-card {
     background: var(--md-default-bg-color);
     border: 1px solid var(--md-divider-color);
-    border-radius: 10px;
+    border-radius: 8px;
     overflow: hidden;
   }
 
-  .gh-popover-panel::before {
-    content: ""; position: absolute; top: -8px; right: 6px;
-    border-left: 8px solid transparent; border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--md-divider-color);
-  }
-
-  .gh-popover-panel::after {
-    content: ""; position: absolute; top: -7px; right: 6px;
-    border-left: 8px solid transparent; border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--md-default-bg-color);
-  }
-
-  .gh-popover-header { padding: 16px; text-align: center; border-bottom: 1px solid var(--md-divider-color); }
-  .gh-popover-header h3 { margin: 0 !important; font-size: 0.85rem !important; }
-  .gh-popover-header p { margin: 4px 0 0 !important; font-size: 0.7rem !important; color: var(--md-default-fg-color--light); }
+  .gh-popover-header { padding: 16px; border-bottom: 1px solid var(--md-divider-color); text-align: left; }
+  .gh-popover-header h3 { margin: 0 !important; font-size: 0.9rem !important; color: var(--md-default-fg-color); }
+  .gh-popover-header p { margin: 4px 0 0 !important; font-size: 0.7rem !important; line-height: 1.4; color: var(--md-default-fg-color--light); }
 
   .gh-popover-body { padding: 16px; }
   .gh-btn-primary {
     display: block; background: #238636; color: #fff !important;
-    text-align: center; padding: 8px; border-radius: 6px;
-    font-size: 0.75rem; font-weight: 600; text-decoration: none;
+    text-align: center; padding: 10px; border-radius: 6px;
+    font-size: 0.8rem; font-weight: 600; text-decoration: none;
   }
-  
+
   .gh-links { margin: 12px 0 0; padding: 0; list-style: none !important; }
-  .gh-links li { margin: 6px 0; }
+  .gh-links li { margin-bottom: 8px; padding-left: 0 !important; }
   .gh-links li a { font-size: 0.75rem; color: var(--md-typeset-a-color); text-decoration: none; }
   .gh-links li a:hover { text-decoration: underline; }
 
-  /* 外部点击关闭：全屏透明层 */
+  /* 遮罩层 */
   .gh-popover-container[open] > summary::before {
-    content: " ";
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 99;
-    background: transparent;
+    content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 90; background: transparent; cursor: default;
   }
 </style>
