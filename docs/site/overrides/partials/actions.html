@@ -1,53 +1,53 @@
-{# 1. 变量配置区：未来只需在此增删改链接，列表会自动自适应 #}
-{% set repo_url = "https://github.com/MontageWiki/wiki/wiki" %}
-{% set wiki_page = page.file.src_uri | replace("index.md", "Home") | replace(".md", "") %}
-{% set login_edit_url = "https://github.com/login?return_to=" ~ (repo_url ~ "/" ~ wiki_page ~ "/_edit") | urlencode %}
+{# 1. 配置与变量定义 #}
+{% set repo_base = "https://github.com/MontageWiki/wiki/wiki" %}
+{% set page_name = page.file.src_uri | replace("index.md", "Home") | replace(".md", "") %}
 
+{# 快速链接列表：方便未来增删，自动渲染至弹出框 #}
 {% set quick_links = [
-  {"title": "百科语法指南", "url": repo_url ~ "/百科语法指南"},
-  {"title": "GitHub 帮助指南", "url": repo_url ~ "/GitHub-帮助指南"},
-  {"title": "贡献指南", "url": repo_url ~ "/贡献指南"}
+    { "title": "百科语法指南", "url": repo_base ~ "/百科语法指南" },
+    { "title": "GitHub 帮助指南", "url": repo_base ~ "/GitHub-帮助指南" },
+    { "title": "贡献指南", "url": repo_base ~ "/贡献指南" }
 ] %}
 
-{# 2. 导航布局 #}
-<nav class="md-content__articles gh-actions-wrapper">
+<div class="md-content__articles custom-actions" data-search-ignore aria-hidden="true">
   
-  {# 按钮 A: 编辑 (带局部弹出层) #}
-  <details class="gh-actions-details">
+  {# 2. 编辑按钮与弹出层 (纯 CSS 实现) #}
+  <details class="actions-details">
     <summary class="md-content__button md-icon" title="贡献与编辑">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
     </summary>
-
-    {# 弹出框内容：使用 aria-hidden 和 search-ignore 属性防止抓取脚本误读 #}
-    <div class="gh-popover" aria-hidden="true" data-search-ignore>
-      <div class="gh-popover-inner">
-        <div class="gh-popover-header">
-          <strong>参与百科贡献</strong>
-          <span>一本众创、共建、同享的字幕百科</span>
-        </div>
-        <div class="gh-popover-content">
-          <a href="{{ login_edit_url }}" class="gh-btn-primary">使用 GitHub 账号编辑</a>
-          <ul class="gh-links-list">
-            {% for link in quick_links %}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+    
+    {# Popover 弹出小框 #}
+    <div class="actions-popover">
+      <div class="popover-header">
+        <strong>参与百科贡献</strong>
+        <p>一本众创、共建、同享的字幕百科</p>
       </div>
+      
+      <a href="{{ repo_base }}/{{ page_name }}/_edit" class="gh-btn-primary">
+        使用 GitHub 账号编辑
+      </a>
+
+      <div class="popover-divider"></div>
+
+      <ul class="quick-links">
+        {% for link in quick_links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
     </div>
   </details>
 
-  {# 按钮 B: 查看历史 (官方图标风格) #}
-  <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="md-content__button md-icon">
+  {# 3. 查看历史按钮 #}
+  <a href="{{ repo_base }}/{{ page_name }}/_history" class="md-content__button md-icon" title="查看编辑历史">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
   </a>
+</div>
 
-</nav>
-
-{# 3. 样式表 #}
+{# 4. 专属样式定义 #}
 <style>
-  /* 基础布局：移除默认包裹感 */
-  .gh-actions-wrapper {
+  /* 容器布局：右上角对齐 */
+  .custom-actions {
     float: right;
     display: flex;
     gap: 4px;
@@ -55,87 +55,84 @@
     z-index: 10;
   }
 
-  .gh-actions-details {
-    position: relative;
-    display: inline-block;
-  }
-
-  .gh-actions-details summary {
-    list-style: none;
-    outline: none;
+  /* 基础按钮样式重置 */
+  .custom-actions .md-icon {
     cursor: pointer;
+    transition: color .2s;
+    color: var(--md-icon-fg-color);
   }
-  .gh-actions-details summary::-webkit-details-marker { display: none; }
 
-  /* 局部弹出框定位 (Popover) */
-  .gh-popover {
+  /* 隐藏 details 默认箭头 */
+  .actions-details summary {
+    list-style: none;
+    display: block;
+  }
+  .actions-details summary::-webkit-details-marker {
+    display: none;
+  }
+
+  /* 弹出层定位与样式 (Popover) */
+  .actions-popover {
     position: absolute;
     right: 0;
     top: 100%;
     margin-top: 8px;
     width: 240px;
-    z-index: 100;
-    /* 关键：防止抓取脚本将此识别为正文前导 */
-    contain: layout;
-    pointer-events: auto;
-  }
-
-  .gh-popover-inner {
     background: var(--md-default-bg-color);
     border: 1px solid var(--md-divider-color);
     border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    overflow: hidden;
+    box-shadow: var(--md-shadow-z2);
+    padding: 16px;
+    font-size: 0.75rem;
+    color: var(--md-default-fg-color);
+    animation: popIn 0.2s ease-out;
   }
 
-  /* 弹出框内部美化 */
-  .gh-popover-header {
-    padding: 12px 16px;
-    background: var(--md-default-bg-color--lightest);
-    border-bottom: 1px solid var(--md-divider-color);
-    display: flex;
-    flex-direction: column;
+  @keyframes popIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
   }
-  .gh-popover-header strong { font-size: 0.75rem; color: var(--md-default-fg-color); }
-  .gh-popover-header span { font-size: 0.65rem; color: var(--md-default-fg-color--light); }
 
-  .gh-popover-content { padding: 12px 16px; }
+  /* 弹出层内部元素 */
+  .popover-header strong { display: block; font-size: 0.85rem; margin-bottom: 4px; }
+  .popover-header p { margin: 0 0 12px 0; color: var(--md-default-fg-color--light); line-height: 1.4; }
 
   .gh-btn-primary {
     display: block;
     background-color: #1f883d;
-    color: #ffffff !important;
+    color: #fff !important;
     text-align: center;
-    padding: 6px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: 600;
+    padding: 8px;
+    border-radius: 6px;
     text-decoration: none;
+    font-weight: 600;
     margin-bottom: 12px;
   }
   .gh-btn-primary:hover { background-color: #1a7a35; }
 
-  .gh-links-list {
-    margin: 0; padding: 0; list-style: none;
-    border-top: 1px solid var(--md-divider-color);
-    padding-top: 8px;
+  .popover-divider {
+    height: 1px;
+    background: var(--md-divider-color);
+    margin: 12px 0;
   }
-  .gh-links-list li a {
-    display: block;
-    padding: 4px 0;
-    font-size: 0.7rem;
+
+  .quick-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .quick-links li { margin-bottom: 8px; }
+  .quick-links a {
     color: var(--md-typeset-a-color);
     text-decoration: none;
   }
-  .gh-links-list li a:hover { text-decoration: underline; }
+  .quick-links a:hover { text-decoration: underline; }
 
-  /* 遮罩层：点击空白处关闭 */
-  .gh-actions-details[open] > summary::before {
-    content: " ";
+  /* 点击外部自动关闭的“全屏透明遮罩”模拟 (可选) */
+  .actions-details[open] > summary::before {
+    content: "";
     position: fixed;
-    top: 0; right: 0; bottom: 0; left: 0;
+    top: 0; left: 0; width: 100vw; height: 100vh;
     cursor: default;
-    z-index: 90;
-    background: transparent;
   }
-</style>
+        </style>
