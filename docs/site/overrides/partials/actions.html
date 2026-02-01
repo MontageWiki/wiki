@@ -1,27 +1,30 @@
-{# 1. 配置区 #}
+{# 1. 配置逻辑 #}
 {% set repo_url = "https://github.com/MontageWiki/wiki/wiki" %}
 {% set file_path = page.file.src_uri %}
 {% set wiki_page = file_path | replace("index.md", "Home") | replace(".md", "") %}
 {% set target_edit_url = repo_url ~ "/" ~ wiki_page ~ "/_edit" %}
 {% set login_edit_url = "https://github.com/login?return_to=" ~ (target_edit_url | urlencode) %}
 
-<div class="wiki-actions-pure" data-search-ignore aria-hidden="true">
-  {# 1. 编辑层 #}
-  <details class="wiki-popover-container">
-    <summary class="wiki-btn-anchor" title="贡献与编辑">
-      <span class="wiki-icon-wrapper">
+{# 2. 结构层：增加 no-border 类名强制隔离 #}
+<div class="md-content__actions wiki-custom-container" data-search-ignore aria-hidden="true">
+  
+  {# 编辑按钮详情页 #}
+  <details class="wiki-details">
+    <summary class="wiki-trigger" title="贡献与编辑">
+      <div class="icon-clean-box">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1-1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
-      </span>
+      </div>
     </summary>
-    <div class="wiki-popover-panel">
-      <div class="wiki-popover-card">
-        <div class="wiki-popover-header">
+    {# 弹出面板保持原有设计 #}
+    <div class="wiki-panel">
+      <div class="wiki-card">
+        <div class="wiki-header">
           <h3>参与百科贡献</h3>
           <p>一本众创、共建、同享的字幕百科</p>
         </div>
-        <div class="wiki-popover-body">
-          <a href="{{ login_edit_url }}" class="wiki-btn-primary">使用 GitHub 账号编辑</a>
-          <ul class="wiki-links">
+        <div class="wiki-body">
+          <a href="{{ login_edit_url }}" class="wiki-btn-go">使用 GitHub 账号编辑</a>
+          <ul class="wiki-list">
             <li><a href="{{ repo_url }}/百科语法指南">百科语法指南</a></li>
             <li><a href="{{ repo_url }}/GitHub-帮助指南">GitHub 帮助指南</a></li>
             <li><a href="{{ repo_url }}/贡献指南">贡献指南</a></li>
@@ -31,138 +34,117 @@
     </div>
   </details>
 
-  {# 2. 历史按钮 #}
-  <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="wiki-btn-anchor">
-    <span class="wiki-icon-wrapper">
+  {# 历史按钮 #}
+  <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="wiki-trigger">
+    <div class="icon-clean-box">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
-    </span>
+    </div>
   </a>
 </div>
 
 <style>
-  /* 1. 容器接管：不再使用 .md-content__actions 而是全新的 class */
-  .wiki-actions-pure {
-    float: right;
+  /* 1. 强制抹除 md-content__actions 的所有特征 */
+  .md-content__actions.wiki-custom-container {
+    all: unset !important;
     display: flex !important;
+    float: right !important;
+    gap: 16px !important;
     align-items: center !important;
-    gap: 8px !important;
-    position: relative;
-    z-index: 100;
-    margin-top: -4px; /* 向上微调，对齐标题基线 */
-  }
-
-  /* 彻底屏蔽 Material 注入的任何可能影响 actions 的背景 */
-  .md-content__actions {
     background: none !important;
     border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+    box-shadow: none !important; /* 抹除容器可能的阴影矩形 */
   }
 
-  /* 2. 按钮去矩形：核心攻坚 */
-  .wiki-btn-anchor {
+  /* 2. 彻底去矩形：针对所有潜在的背景、边框、阴影、外边框进行“大扫除” */
+  .wiki-trigger, 
+  .wiki-trigger:focus, 
+  .wiki-trigger:active,
+  .wiki-custom-container summary {
     all: unset !important;
-    display: inline-flex !important;
+    display: flex !important;
     cursor: pointer !important;
-    padding: 4px !important;
-    border-radius: 0 !important; /* 强制去圆角 */
     background: transparent !important;
+    background-color: transparent !important;
     border: none !important;
-    box-shadow: none !important;
+    box-shadow: none !important;      /* 核心：抹除那个 5-10px 的矩形阴影 */
+    outline: none !important;         /* 核心：抹除焦点轮廓线 */
+    -webkit-appearance: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
     color: var(--md-default-fg-color--light) !important;
-    transition: color 0.2s;
-    pointer-events: auto !important; /* 确保可点击 */
   }
 
-  /* 杀掉所有伪元素（矩形来源） */
-  .wiki-btn-anchor::before, 
-  .wiki-btn-anchor::after,
-  .wiki-btn-anchor span::before,
-  .wiki-btn-anchor span::after {
+  /* 针对 Material 主题特有的伪元素矩形进行“定点爆破” */
+  .wiki-trigger::before, .wiki-trigger::after,
+  summary.wiki-trigger::before, summary.wiki-trigger::after {
     display: none !important;
     content: none !important;
     background: none !important;
+    box-shadow: none !important;
   }
 
-  .wiki-icon-wrapper {
+  .icon-clean-box {
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
   }
 
-  .wiki-icon-wrapper svg {
+  .icon-clean-box svg {
     width: 100%;
     height: 100%;
-    fill: currentColor !important;
+    fill: currentColor;
   }
 
-  .wiki-btn-anchor:hover {
+  .wiki-trigger:hover {
     color: var(--md-typeset-a-color) !important;
-    background: transparent !important;
   }
 
-  /* 3. Popover 逻辑修复 */
-  .wiki-popover-container {
-    display: inline-block;
-    position: relative;
-    list-style: none;
+  /* 3. Popover 逻辑增强 */
+  .wiki-details {
+    display: inline-block !important;
+    position: relative !important;
   }
-  
-  .wiki-popover-container summary::-webkit-details-marker { display: none !important; }
 
-  .wiki-popover-panel {
+  .wiki-details summary::-webkit-details-marker { display: none !important; }
+
+  .wiki-panel {
     position: absolute;
     top: 100%;
     right: 0;
     margin-top: 10px;
     width: 280px;
     z-index: 1000;
-    cursor: default;
-    /* 确保点击面板内部不会关闭 */
-    pointer-events: auto;
   }
 
-  .wiki-popover-card {
+  .wiki-card {
     background: var(--md-default-bg-color);
     border: 1px solid var(--md-divider-color);
-    border-radius: 8px;
-    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.12));
+    border-radius: 12px;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
     overflow: hidden;
   }
 
-  /* 气泡尖角 */
-  .wiki-popover-panel::before {
-    content: ""; position: absolute; top: -8px; right: 10px;
-    border-left: 8px solid transparent; border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--md-divider-color);
-  }
-  .wiki-popover-panel::after {
-    content: ""; position: absolute; top: -7px; right: 10px;
-    border-left: 8px solid transparent; border-right: 8px solid transparent;
-    border-bottom: 8px solid var(--md-default-bg-color);
-  }
+  .wiki-header { padding: 16px; border-bottom: 1px solid var(--md-divider-color); }
+  .wiki-header h3 { margin: 0 !important; font-size: 0.9rem !important; font-weight: 700 !important; color: var(--md-default-fg-color); }
+  .wiki-header p { margin: 4px 0 0 !important; font-size: 0.7rem !important; color: var(--md-default-fg-color--light); }
 
-  .wiki-popover-header { padding: 16px; border-bottom: 1px solid var(--md-divider-color); }
-  .wiki-popover-header h3 { margin: 0 !important; font-size: 0.85rem !important; font-weight: 700 !important; }
-  .wiki-popover-header p { margin: 4px 0 0 !important; font-size: 0.7rem !important; line-height: 1.4 !important; color: var(--md-default-fg-color--light) !important; }
-
-  .wiki-popover-body { padding: 16px; }
-  .wiki-btn-primary {
+  .wiki-body { padding: 16px; }
+  .wiki-btn-go {
     display: block; background: #238636; color: #fff !important;
-    text-align: center; padding: 8px; border-radius: 6px;
+    text-align: center; padding: 10px; border-radius: 6px;
     font-size: 0.8rem; font-weight: 600; text-decoration: none;
     margin-bottom: 12px;
   }
 
-  .wiki-links { margin: 0; padding: 0; list-style: none !important; }
-  .wiki-links li { margin-bottom: 6px !important; }
-  .wiki-links li a { font-size: 0.75rem; color: var(--md-typeset-a-color); text-decoration: none; }
-  .wiki-links li a:hover { text-decoration: underline; }
+  .wiki-list { margin: 0; padding: 0; list-style: none !important; }
+  .wiki-list li { margin-bottom: 8px !important; padding: 0 !important; }
+  .wiki-list li a { font-size: 0.75rem; color: var(--md-typeset-a-color); text-decoration: none; }
+  .wiki-list li a:hover { text-decoration: underline; }
 
-  /* 点击外部关闭 */
-  .wiki-popover-container[open] > summary::before {
+  /* 点击外部自动关闭遮罩 */
+  .wiki-details[open] > summary::before {
     content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     z-index: 90; background: transparent;
   }
