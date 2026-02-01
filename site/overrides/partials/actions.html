@@ -5,15 +5,15 @@
 {% set target_edit_url = repo_url ~ "/" ~ wiki_page ~ "/_edit" %}
 {% set login_edit_url = "https://github.com/login?return_to=" ~ (target_edit_url | urlencode) %}
 
-<div class="wiki-actions-final" data-search-ignore aria-hidden="true">
-  {# 详情下拉 #}
-  <details class="wiki-details-reset">
-    <summary class="wiki-btn-ghost" title="贡献与编辑">
-      <div class="wiki-svg-fix">
+<div class="wiki-actions-pure" data-search-ignore aria-hidden="true">
+  {# 下拉菜单 #}
+  <details class="wiki-details">
+    {# 注意：删除了 title 属性，改用 aria-label 避开 Material Tooltip JS #}
+    <summary class="wiki-anchor" aria-label="贡献与编辑">
+      <div class="wiki-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1-1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
       </div>
     </summary>
-    {# 弹出面板 #}
     <div class="wiki-popover">
       <div class="wiki-card">
         <div class="wiki-header">
@@ -21,8 +21,8 @@
           <p>一本众创、共建、同享的字幕百科</p>
         </div>
         <div class="wiki-body">
-          <a href="{{ login_edit_url }}" class="wiki-primary-btn">使用 GitHub 账号编辑</a>
-          <ul class="wiki-quick-links">
+          <a href="{{ login_edit_url }}" class="wiki-btn-main">使用 GitHub 账号编辑</a>
+          <ul class="wiki-link-group">
             <li><a href="{{ repo_url }}/百科语法指南">百科语法指南</a></li>
             <li><a href="{{ repo_url }}/GitHub-帮助指南">GitHub 帮助指南</a></li>
             <li><a href="{{ repo_url }}/贡献指南">贡献指南</a></li>
@@ -33,122 +33,124 @@
   </details>
 
   {# 历史链接 #}
-  <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="wiki-btn-ghost">
-    <div class="wiki-svg-fix">
+  <a href="{{ repo_url }}/{{ wiki_page }}/_history" class="wiki-anchor" aria-label="查看编辑历史">
+    <div class="wiki-icon">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
     </div>
   </a>
 </div>
 
 <style>
-  /* 1. 顶层强制隔离：清除 md-content__actions 所有默认视觉表现 */
+  /* 1. 强力清除原生容器干扰 */
   .md-content__actions {
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+    all: unset !important;
+    display: block !important;
+    float: right !important;
+    margin-top: 4px !important;
   }
 
-  /* 2. 容器布局 */
-  .wiki-actions-final {
-    float: right;
+  /* 2. 这里的类名必须完全避开 md- 关键词 */
+  .wiki-actions-pure {
     display: flex !important;
     align-items: center !important;
-    gap: 14px !important;
+    gap: 12px !important;
     position: relative;
-    z-index: 100;
   }
 
-  /* 3. 彻底杀掉矩形框的关键：覆盖 Material 内部所有交互元素的背景逻辑 */
-  .wiki-btn-ghost, 
-  .wiki-btn-ghost:hover,
-  .wiki-details-reset summary.wiki-btn-ghost {
+  /* 3. 彻底杀掉矩形框 */
+  .wiki-anchor, 
+  .wiki-anchor:hover, 
+  .wiki-anchor:focus,
+  .wiki-details summary.wiki-anchor {
     all: unset !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
+    width: 24px !important;
+    height: 24px !important;
     cursor: pointer !important;
-    /* 核心：即使主题强制显示，我们也将其设为全透明 */
-    background-color: rgba(0,0,0,0) !important;
-    background: none !important;
+    /* 核心：强制所有背景透明，杀掉 Tooltip 锚点背景 */
+    background: transparent !important;
+    background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
     outline: none !important;
-    border-radius: 0 !important;
     padding: 0 !important;
     margin: 0 !important;
-    width: 24px !important;
-    height: 24px !important;
     color: var(--md-default-fg-color--light) !important;
     transition: color 0.2s !important;
+    -webkit-tap-highlight-color: transparent !important;
   }
 
-  /* 杀掉 Material 的 Tooltip 矩形和伪元素反馈 */
-  .wiki-btn-ghost::before, .wiki-btn-ghost::after,
-  .wiki-details-reset summary::before, .wiki-details-reset summary::after {
+  /* 杀掉主题可能注入的伪元素矩形 */
+  .wiki-anchor::before, .wiki-anchor::after {
     display: none !important;
     content: none !important;
-    opacity: 0 !important;
   }
 
-  .wiki-svg-fix {
+  .wiki-icon {
     width: 20px;
     height: 20px;
-    display: flex;
-    pointer-events: none; /* 确保点击穿透到 parent */
+    display: block;
+    pointer-events: none;
   }
 
-  .wiki-svg-fix svg {
+  .wiki-icon svg {
     width: 100%;
     height: 100%;
     fill: currentColor;
+    display: block;
   }
 
-  .wiki-btn-ghost:hover {
+  .wiki-anchor:hover {
     color: var(--md-typeset-a-color) !important;
   }
 
-  /* 4. 下拉逻辑对齐 */
-  .wiki-details-reset {
+  /* 4. Popover 逻辑修复 */
+  .wiki-details {
     display: inline-flex !important;
     position: relative !important;
   }
+  .wiki-details summary::-webkit-details-marker { display: none !important; }
 
-  .wiki-details-reset summary::-webkit-details-marker { display: none !important; }
-
-  /* 外部点击关闭：全屏透明层 */
-  .wiki-details-reset[open] > summary::before {
-    content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    z-index: 90; background: transparent;
-  }
-
-  /* 弹出面板样式保持 GitHub 风格 */
+  /* 弹出面板 */
   .wiki-popover {
-    position: absolute; top: 100%; right: 0; margin-top: 12px;
-    width: 280px; z-index: 1000; cursor: default;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.12));
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    width: 280px;
+    z-index: 1000;
+    pointer-events: auto;
   }
 
   .wiki-card {
     background: var(--md-default-bg-color);
     border: 1px solid var(--md-divider-color);
-    border-radius: 10px; overflow: hidden;
+    border-radius: 10px;
+    filter: drop-shadow(0 10px 25px rgba(0,0,0,0.15));
+    overflow: hidden;
   }
 
-  .wiki-header { padding: 16px; border-bottom: 1px solid var(--md-divider-color); text-align: left; }
-  .wiki-header h3 { margin: 0 !important; font-size: 0.85rem !important; font-weight: 700; color: var(--md-default-fg-color); }
-  .wiki-header p { margin: 4px 0 0 !important; font-size: 0.65rem !important; line-height: 1.4; color: var(--md-default-fg-color--light); }
+  .wiki-header { padding: 16px; border-bottom: 1px solid var(--md-divider-color); }
+  .wiki-header h3 { margin: 0 !important; font-size: 0.9rem !important; color: var(--md-default-fg-color); }
+  .wiki-header p { margin: 4px 0 0 !important; font-size: 0.65rem !important; color: var(--md-default-fg-color--light); }
 
   .wiki-body { padding: 16px; }
-  .wiki-primary-btn {
+  .wiki-btn-main {
     display: block; background: #238636; color: #fff !important;
     text-align: center; padding: 10px; border-radius: 6px;
     font-size: 0.8rem; font-weight: 600; text-decoration: none;
-    margin-bottom: 12px;
   }
 
-  .wiki-quick-links { margin: 0; padding: 0; list-style: none !important; }
-  .wiki-quick-links li { margin-bottom: 6px !important; padding-left: 0 !important; }
-  .wiki-quick-links li a { font-size: 0.75rem; color: var(--md-typeset-a-color); text-decoration: none; }
-  .wiki-quick-links li a:hover { text-decoration: underline; }
+  .wiki-link-group { margin: 12px 0 0; padding: 0; list-style: none !important; }
+  .wiki-link-group li { margin-bottom: 6px !important; padding: 0 !important; }
+  .wiki-link-group li a { font-size: 0.75rem; color: var(--md-typeset-a-color); text-decoration: none; }
+  .wiki-link-group li a:hover { text-decoration: underline; }
+
+  /* 点击外部关闭遮罩 */
+  .wiki-details[open] > summary::before {
+    content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 90; background: transparent;
+  }
 </style>
