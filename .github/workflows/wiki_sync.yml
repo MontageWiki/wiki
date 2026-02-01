@@ -48,7 +48,7 @@ jobs:
             LAST_SYNC_SHA=""
           fi
           
-          git clone https://github.com/MontageSubs/wiki.wiki.git wiki_git
+          git clone https://github.com/MontageWiki/wiki.wiki.git wiki_git
           cd wiki_git
           
           if [ -z "$LAST_SYNC_SHA" ]; then
