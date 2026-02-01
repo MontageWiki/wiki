@@ -1,10 +1,78 @@
 {% extends "base.html" %}
 
-{% block footer %}
-  {% include "partials/footer.html" %}
-{% endblock %}
-
 {% block content %}
-  {% include "partials/actions.html" %}
+  {# 1. 定义变量 #}
+  {% set repo_url = "https://github.com/MontageWiki/wiki/wiki" %}
+  {% set file_path = page.file.src_uri %}
+  {% set wiki_page = file_path | replace("index.md", "Home") | replace(".md", "") %}
+  {% set target_edit_url = repo_url ~ "/" ~ wiki_page ~ "/_edit" %}
+  {% set login_edit_url = "https://github.com/login?return_to=" ~ (target_edit_url | urlencode) %}
+
+  {# 2. 右上角图标按钮 #}
+  <nav class="md-content__articles" style="float: right; display: flex; gap: 8px; position: relative; z-index: 1;">
+    <a href="{{ login_edit_url }}" id="edit-btn" title="贡献与编辑" class="md-content__button md-icon" style="color: var(--md-icon-fg-color);">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+    </a>
+    <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="md-content__button md-icon" style="color: var(--md-icon-fg-color);">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"></path></svg>
+    </a>
+  </nav>
+
+  {# 3. 编辑弹窗 #}
+  <dialog id="edit-dialog" style="border: 1px solid var(--md-divider-color); border-radius: 12px; padding: 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 90%; max-width: 360px; font-family: inherit; background: var(--md-default-bg-color); color: var(--md-default-fg-color);">
+    <div style="text-align: center; margin-bottom: 20px;">
+      <h3 style="margin: 0; font-size: 1.2rem; color: var(--md-default-fg-color); font-weight: 700;">参与百科贡献</h3>
+      <p style="font-size: 0.8rem; color: var(--md-default-fg-color--light); margin-top: 8px; line-height: 1.5;">一本众创、共建、同享的字幕百科</p>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <a href="{{ login_edit_url }}" class="gh-btn-primary" style="color: #ffffff !important; padding: 12px; border-radius: 6px; text-align: center; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: block; border: 1px solid rgba(27, 31, 35, 0.15);">
+        使用 GitHub 账号编辑
+      </a>
+    </div>
+    <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--md-divider-color);">
+      <ul style="font-size: 0.8rem; padding-left: 1.2rem; line-height: 2; margin: 0;">
+        <li><a href="{{ repo_url }}/百科语法指南" style="color: var(--md-typeset-a-color); text-decoration: none;">百科语法指南</a></li>
+        <li><a href="{{ repo_url }}/GitHub-帮助指南" style="color: var(--md-typeset-a-color); text-decoration: none;">GitHub 帮助指南</a></li>
+        <li><a href="{{ repo_url }}/贡献指南" style="color: var(--md-typeset-a-color); text-decoration: none;">贡献指南</a></li>
+      </ul>
+    </div>
+    <button onclick="this.closest('dialog').close()" class="gh-btn-secondary" style="margin-top: 20px; width: 100%; padding: 10px; cursor: pointer; border-radius: 8px; font-size: 0.85rem; font-weight: 500; border: 1px solid var(--md-divider-color);">取消</button>
+  </dialog>
+
+  {# 4. 样式与脚本 #}
+  <style>
+    /* 绿色按钮通用样式 */
+    .gh-btn-primary { background-color: #1f883d; }
+    .gh-btn-primary:hover { background-color: #1a7a35; }
+    [data-md-color-scheme="slate"] .gh-btn-primary { background-color: #238636; }
+    [data-md-color-scheme="slate"] .gh-btn-primary:hover { background-color: #2ea043; }
+    
+    /* 次要按钮（取消按钮）浅色模式 */
+    .gh-btn-secondary { 
+      background-color: #f6f8fa; 
+      color: #24292f !important; 
+      transition: background-color 0.2s;
+    }
+    .gh-btn-secondary:hover { background-color: #f3f4f6; }
+
+    /* 次要按钮（取消按钮）深色模式 (Slate) - 找回的内容 */
+    [data-md-color-scheme="slate"] .gh-btn-secondary { 
+      background-color: #212830; 
+      color: #adbac7 !important; 
+      border-color: #444c56;
+    }
+    [data-md-color-scheme="slate"] .gh-btn-secondary:hover { 
+      background-color: #262c36; 
+      border-color: #768390;
+    }
+  </style>
+
+  <script>
+    document.getElementById('edit-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('edit-dialog').showModal();
+    });
+  </script>
+
   {{ super() }}
 {% endblock %}
