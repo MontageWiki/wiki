@@ -1,10 +1,10 @@
 # ==========================================================================
 # 1. 项目基础信息
 # ==========================================================================
-site_name: 蒙太奇字幕百科 | MontageWiki
+site_name: 蒙太奇字幕组百科
 site_description: 一本众创、共建、同享的字幕百科。
-site_author: MontageWiki Community
-site_url: https://montagewiki.github.io/
+site_author: MontageSubs
+site_url: https://montagewiki.github.io/wiki/
 edit_uri: https://github.com/MontageWiki/wiki/wiki/
 
 # ==========================================================================
@@ -16,12 +16,10 @@ theme:
   language: zh
   logo: site/assets/montagesubs_logo-512.jpg
   favicon: site/assets/favicon.ico
-  
-  font:
-    text: Roboto
-    code: Roboto Mono
+  font: false
     
   features:
+    - announce.dismiss
     - navigation.tabs
     - navigation.sections
     - navigation.top
@@ -30,6 +28,9 @@ theme:
     - search.highlight
     - content.code.copy
     - content.tooltips
+    - search.share
+    - navigation.instant  # 开启即时加载，体验极速
+    - navigation.instant.prefetch # 预取链接，鼠标悬停时就开始后台加载
     
   hide:
     - footer.powered
@@ -60,13 +61,24 @@ theme:
 # ==========================================================================
 plugins:
   - search:
-      lang:
-        - en
-        - zh
+      lang: [en, zh]
       prebuild_index: true
       pipeline: []
       indexing: 'full'
       separator: '[\s\-\.\u200b\uff0c\u3002\uff01\u3001\uff1f]+'
+  - git-revision-date-localized:
+      type: datetime
+      custom_format: "%Y-%m-%d %H:%M:%S"
+      locale: zh
+      enable_git_follow: true
+      show_authors: false
+  - minify:
+      minify_html: true
+      minify_js: true
+      minify_css: true
+      html_minifier_ignore_comments: true
+  - awesome-pages
+
 # ==========================================================================
 # 4. Markdown 扩展增强
 # ==========================================================================
@@ -92,21 +104,22 @@ extra_css:
 
 extra:
   social:
-    - icon: fontawesome/brands/github
+    - icon: material/home
       link: https://montagesubs.github.io
+      name: 主页
     - icon: fontawesome/solid/paper-plane
       link: https://t.me/s/MTSubs
+      name: Telegram 频道
     - icon: fontawesome/brands/weibo
       link: https://weibo.com/u/8358891788
+      name: 新浪微博
     - icon: fontawesome/brands/bluesky
       link: https://bsky.app/profile/montagesubs.bsky.social
+      name: BlueSky
+    - icon: fontawesome/brands/github
+      link: https://github.com/MontageSubs
+      name: GitHub
 
-# ==========================================================================
-# 6. 页脚与导航
-# ==========================================================================
-copyright: |
-  Copyright &copy; 2026 <a href="https://montagesubs.github.io">MontageSubs</a>
-
-nav:
-  - 首页: index.md
-  - 新增条目: https://github.com/login?return_to=https%3A//github.com/MontageWiki/wiki/wiki/_new
+#nav:
+#  - 首页: index.md
+#  - 新增条目: https://github.com/login?return_to=https%3A//github.com/MontageSubs/wiki/wiki/_new
