@@ -1,149 +1,158 @@
+{# 1. 配置区：Jinja2 变量定义 #}
+{% set repo_url = "https://github.com/MontageWiki/wiki/wiki" %}
+{% set file_path = page.file.src_uri %}
+{% set wiki_page = file_path | replace("index.md", "Home") | replace(".md", "") %}
+{% set target_edit_url = repo_url ~ "/" ~ wiki_page ~ "/_edit" %}
+{% set login_edit_url = "https://github.com/login?return_to=" ~ (target_edit_url | urlencode) %}
 
-{# 1. 配置逻辑 #}
-{% set repo_base = "https://github.com/MontageWiki/wiki/wiki" %}
-{% set page_name = page.file.src_uri | replace("index.md", "Home") | replace(".md", "") %}
+{% set quick_links = [
+  {"title": "百科语法指南", "url": repo_url ~ "/百科语法指南"},
+  {"title": "GitHub 帮助指南", "url": repo_url ~ "/GitHub-帮助指南"},
+  {"title": "贡献指南", "url": repo_url ~ "/贡献指南"}
+] %}
 
-<div class="custom-actions-wrapper" data-search-ignore>
+{# 2. 导航组件布局 #}
+<nav class="md-content__articles gh-actions-nav">
   
-  {# 编辑按钮组 #}
-  <details class="action-dropdown">
-    <summary class="action-icon-trigger" title="贡献与编辑">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+  {# 编辑按钮 + 局部弹出层 #}
+  <details class="gh-details-popover">
+    <summary class="md-content__button md-icon" title="贡献与编辑">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1-1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
     </summary>
 
-    {# 弹出层：使用 aside 严格隔离正文 SEO #}
-    <aside class="actions-popover-box" aria-hidden="true">
-      <div class="popover-tip"></div> {# 水滴结构 #}
-      <div class="popover-content">
-        <div class="popover-intro">
+    {# 弹出层：aria-hidden 确保不被抓取 #}
+    <div class="gh-popover-panel" aria-hidden="true" data-search-ignore>
+      <div class="gh-popover-box">
+        <div class="gh-popover-header">
           <strong>参与百科贡献</strong>
-          <span>一本众创、共建、同享的字幕百科</span>
+          <p>一本众创、共建、同享的字幕百科</p>
         </div>
-        
-        <a href="{{ repo_base }}/{{ page_name }}/_edit" class="gh-btn-edit">
-          使用 GitHub 账号编辑
-        </a>
-
-        <nav class="popover-nav-links">
-          <a href="{{ repo_base }}/百科语法指南">百科语法指南</a>
-          <a href="{{ repo_base }}/GitHub-帮助指南">GitHub 帮助指南</a>
-          <a href="{{ repo_base }}/贡献指南">贡献指南</a>
-        </nav>
+        <div class="gh-popover-body">
+          <a href="{{ login_edit_url }}" class="gh-btn-primary">使用 GitHub 账号编辑</a>
+          <ul class="gh-popover-links">
+            {% for item in quick_links %}
+            <li><a href="{{ item.url }}">{{ item.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
-    </aside>
+    </div>
   </details>
 
-  {# 查看历史按钮 #}
-  <a href="{{ repo_base }}/{{ page_name }}/_history" class="action-icon-trigger" title="查看编辑历史">
+  {# 查看历史按钮 (官方图标样式) #}
+  <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
   </a>
-</div>
+</nav>
 
+{# 3. 样式定义 #}
 <style>
-/* 1. 彻底移除包裹感 [针对问题一] */
-.custom-actions-wrapper {
-  float: right;
-  display: flex;
-  gap: 16px;
-  position: relative;
-  z-index: 100;
-}
+  /* 基础容器：确保局部定位 */
+  .gh-actions-nav {
+    float: right;
+    display: flex;
+    gap: 4px;
+    position: relative;
+    z-index: 100;
+  }
 
-.action-icon-trigger {
-  display: inline-block;
-  width: 24px;
-  height: 24px;
-  color: var(--md-icon-fg-color);
-  cursor: pointer;
-  background: none !important; /* 强制移除原生背景 */
-  border: none !important;       /* 强制移除原生边框 */
-  padding: 0 !important;        /* 移除填充 */
-  list-style: none;
-  transition: color 0.2s;
-}
+  /* Details 极简重置 */
+  .gh-details-popover { position: relative; display: inline-block; }
+  .gh-details-popover summary { list-style: none; outline: none; cursor: pointer; }
+  .gh-details-popover summary::-webkit-details-marker { display: none; }
 
-.action-icon-trigger:hover {
-  color: var(--md-typeset-a-color);
-}
+  /* 弹出面板定位 */
+  .gh-popover-panel {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    width: 260px;
+    z-index: 1000;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.15));
+    /* 屏蔽抓取优化 */
+    contain: layout;
+  }
 
-.action-dropdown summary::-webkit-details-marker { display: none; }
+  /* 弹出框主体设计（参考 GitHub Box 风格） */
+  .gh-popover-box {
+    background: var(--md-default-bg-color);
+    border: 1px solid var(--md-divider-color);
+    border-radius: 8px;
+    overflow: hidden;
+  }
 
-/* 2. 弹出层、暗区阴影与水滴 [针对问题二] */
-.actions-popover-box {
-  position: absolute;
-  top: 36px;
-  right: 18px;
-  width: 240px;
-  background: var(--md-default-bg-color);
-  border-radius: 8px;
-  /* 深度暗区阴影 */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2), 0 0 0 1px var(--md-divider-color);
-  animation: popShow 0.2s ease-out;
-}
+  /* 局部“水滴/小三角”指向图标 */
+  .gh-popover-panel::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--md-divider-color);
+  }
+  .gh-popover-panel::after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    right: 12px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid var(--md-default-bg-color);
+  }
 
-/* 水滴结构 (小尖角) */
-.popover-tip {
-  position: absolute;
-  top: -6px;
-  right: 12px;
-  width: 12px;
-  height: 12px;
-  background: var(--md-default-bg-color);
-  transform: rotate(45deg);
-  border-left: 1px solid var(--md-divider-color);
-  border-top: 1px solid var(--md-divider-color);
-}
+  /* 内部排版 */
+  .gh-popover-header {
+    padding: 12px 16px;
+    background: var(--md-default-bg-color--lightest);
+    border-bottom: 1px solid var(--md-divider-color);
+  }
+  .gh-popover-header strong { display: block; font-size: 0.8rem; color: var(--md-default-fg-color); }
+  .gh-popover-header p { margin: 4px 0 0; font-size: 0.7rem; color: var(--md-default-fg-color--light); line-height: 1.4; }
 
-/* 3. SEO 隔离样式 [针对问题三] */
-.popover-content {
-  padding: 16px;
-  /* 确保文字不会因为紧凑而显得拥挤 */
-  line-height: 1.5;
-}
+  .gh-popover-body { padding: 16px; }
 
-.popover-intro strong { display: block; font-size: 0.8rem; }
-.popover-intro span { 
-  display: block; 
-  font-size: 0.65rem; 
-  color: var(--md-default-fg-color--light);
-  margin-bottom: 12px;
-}
+  /* 绿色按钮方案 */
+  .gh-btn-primary {
+    display: block;
+    background-color: #1f883d;
+    color: #ffffff !important;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid rgba(27,31,35,0.15);
+  }
+  .gh-btn-primary:hover { background-color: #1a7a35; }
+  [data-md-color-scheme="slate"] .gh-btn-primary { background-color: #238636; }
+  [data-md-color-scheme="slate"] .gh-btn-primary:hover { background-color: #2ea043; }
 
-.gh-btn-edit {
-  display: block;
-  background-color: #1f883d;
-  color: white !important;
-  text-align: center;
-  padding: 8px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 0.75rem;
-  margin-bottom: 12px;
-}
+  /* 链接列表 */
+  .gh-popover-links {
+    margin: 12px 0 0;
+    padding: 12px 0 0;
+    list-style: none;
+    border-top: 1px solid var(--md-divider-color);
+  }
+  .gh-popover-links li a {
+    display: block;
+    padding: 6px 0;
+    font-size: 0.75rem;
+    color: var(--md-typeset-a-color);
+    text-decoration: none;
+  }
+  .gh-popover-links li a:hover { text-decoration: underline; }
 
-.popover-nav-links {
-  border-top: 1px solid var(--md-divider-color);
-  padding-top: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.popover-nav-links a {
-  font-size: 0.7rem;
-  color: var(--md-typeset-a-color);
-}
-
-@keyframes popShow {
-  from { opacity: 0; transform: translateY(-5px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* 点击外部关闭的透明遮罩 */
-.action-dropdown[open] summary::before {
-  content: "";
-  position: fixed;
-  top: 0; left: 0; width: 100vw; height: 100vh;
-  z-index: -1;
-}
+  /* 透明全屏遮罩：实现点击页面任意处关闭弹窗 */
+  .gh-details-popover[open] > summary::before {
+    content: " ";
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    cursor: default;
+    z-index: 90;
+    background: transparent;
+  }
 </style>
