@@ -6,10 +6,9 @@
 {% set login_edit_url = "https://github.com/login?return_to=" ~ (target_edit_url | urlencode) %}
 
 <div class="md-content__actions gh-actions-wrapper" data-search-ignore aria-hidden="true">
-  {# 编辑层 #}
+  {# 1. 编辑层：使用 details 实现 #}
   <details class="gh-popover-container">
     <summary class="gh-icon-clear" title="贡献与编辑">
-      {# 这里的 SVG 保持不变 #}
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1-1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
     </summary>
     <div class="gh-popover-panel">
@@ -30,85 +29,97 @@
     </div>
   </details>
 
-  {# 历史链接 #}
+  {# 2. 历史按钮：使用 a 标签实现 #}
   <a href="{{ repo_url }}/{{ wiki_page }}/_history" title="查看编辑历史" class="gh-icon-clear">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.2 8.2 0 0 1-1.23-2"></path></svg>
   </a>
 </div>
 
 <style>
-  /* 1. 暴力隐藏一切原生插入的干扰项 */
-  .gh-actions-wrapper > a:not(.gh-icon-clear),
-  .gh-actions-wrapper > button,
-  .gh-actions-wrapper .md-icon {
-    display: none !important;
-    opacity: 0 !important;
-    width: 0 !important;
-    position: absolute !important;
-  }
-
-  /* 2. 重置容器：抹除 Material 的矩形背景和内边距 */
+  /* --- 1. 彻底干掉 Material 的原生干扰 --- */
   .md-content__actions.gh-actions-wrapper {
-    all: unset !important;
-    display: flex !important;
-    gap: 12px !important;
-    float: right !important;
-    margin-top: 4px !important;
-    position: relative !important;
-    z-index: 10 !important;
-  }
-
-  /* 3. 彻底重置按钮和 Summary：移除那个该死的“小圆角矩形” */
-  .gh-icon-clear {
-    all: unset !important;
-    appearance: none !important;
     background: transparent !important;
     border: none !important;
-    box-shadow: none !important;
-    display: flex !important;
     padding: 0 !important;
-    margin: 0 !important;
-    width: 24px !important;
-    height: 24px !important;
-    cursor: pointer !important;
-    color: var(--md-default-fg-color--light) !important;
-    transition: color 0.2s !important;
-    /* 关键：防止 Material 使用伪元素添加背景 */
-    outline: none !important;
+    display: flex !important;
+    align-items: center !important; /* 强制垂直居中对齐 */
+    gap: 12px !important;
+    height: 32px; /* 给定一个固定高度方便对齐 */
   }
 
-  .gh-icon-clear::before, .gh-icon-clear::after {
-    display: none !important; /* 杀掉可能存在的 Material 悬浮圆圈 */
+  /* 隐藏所有不是我们定义的子元素 */
+  .gh-actions-wrapper > *:not(.gh-popover-container):not(.gh-icon-clear) {
+    display: none !important;
+  }
+
+  /* --- 2. 按钮深度去样式 --- */
+  .gh-icon-clear, 
+  .gh-popover-container summary.gh-icon-clear {
+    all: unset !important;
+    display: inline-flex !important; /* 关键：内联弹性布局 */
+    align-items: center !important;
+    justify-content: center !important;
+    width: 24px !important;
+    height: 24px !important;
+    background: none !important;      /* 强制去背景 */
+    background-color: transparent !important;
+    border: none !important;          /* 强制去边框 */
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    color: var(--md-default-fg-color--light) !important;
+    transition: color 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 针对你看到的 5-10px 圆角矩形，彻底锁定样式 */
+  .gh-popover-container summary.gh-icon-clear:hover,
+  .gh-icon-clear:hover {
+    background: none !important;
+    background-color: transparent !important;
+    color: var(--md-typeset-a-color) !important;
+  }
+
+  /* 强制抹除 summary 自带的任何伪元素背景 */
+  .gh-icon-clear::before, 
+  .gh-icon-clear::after {
+    content: none !important;
+    display: none !important;
   }
 
   .gh-icon-clear svg {
     width: 20px !important;
     height: 20px !important;
     fill: currentColor !important;
-    margin: auto !important;
+    pointer-events: none;
   }
 
-  .gh-icon-clear:hover {
-    color: var(--md-typeset-a-color) !important;
+  /* --- 3. 对齐修正：details 的特殊处理 --- */
+  .gh-popover-container {
+    display: inline-flex !important; /* 让 details 行为像行内块 */
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 24px !important;
+    vertical-align: middle !important;
   }
 
-  /* 4. 弹出层逻辑保持一致，增强稳定性 */
-  .gh-popover-container { 
-    display: block !important; 
-    position: relative !important; 
-    list-style: none !important; 
+  .gh-popover-container summary::-webkit-details-marker {
+    display: none !important;
   }
-  .gh-popover-container summary::-webkit-details-marker { display: none !important; }
 
+  /* --- 4. 弹出面板 --- */
   .gh-popover-panel {
     position: absolute;
     top: 100%;
-    right: -4px;
-    margin-top: 8px;
+    right: 0;
+    margin-top: 12px;
     width: 280px;
     z-index: 1000;
-    filter: drop-shadow(0 4px 20px rgba(0,0,0,0.15));
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
     cursor: default;
+    line-height: normal; /* 修正可能的行高继承 */
   }
 
   .gh-popover-card {
@@ -118,9 +129,9 @@
     overflow: hidden;
   }
 
-  .gh-popover-header { padding: 16px; border-bottom: 1px solid var(--md-divider-color); text-align: left; }
-  .gh-popover-header h3 { margin: 0 !important; font-size: 0.9rem !important; color: var(--md-default-fg-color); }
-  .gh-popover-header p { margin: 4px 0 0 !important; font-size: 0.7rem !important; line-height: 1.4; color: var(--md-default-fg-color--light); }
+  .gh-popover-header { padding: 16px; border-bottom: 1px solid var(--md-divider-color); }
+  .gh-popover-header h3 { margin: 0 !important; font-size: 0.9rem !important; color: var(--md-default-fg-color); border-bottom: none !important; }
+  .gh-popover-header p { margin: 4px 0 0 !important; font-size: 0.7rem !important; color: var(--md-default-fg-color--light); }
 
   .gh-popover-body { padding: 16px; }
   .gh-btn-primary {
@@ -130,11 +141,11 @@
   }
 
   .gh-links { margin: 12px 0 0; padding: 0; list-style: none !important; }
-  .gh-links li { margin-bottom: 8px; padding-left: 0 !important; }
+  .gh-links li { margin: 0 0 6px 0 !important; padding: 0 !important; }
   .gh-links li a { font-size: 0.75rem; color: var(--md-typeset-a-color); text-decoration: none; }
   .gh-links li a:hover { text-decoration: underline; }
 
-  /* 遮罩层 */
+  /* 遮罩层逻辑保持不动 */
   .gh-popover-container[open] > summary::before {
     content: ""; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     z-index: 90; background: transparent; cursor: default;
