@@ -1,116 +1,102 @@
-/* 隐藏页脚冗余信息 */
-.md-copyright {
-    font-size: 0;
-}
-.md-copyright__highlight, .md-copyright__highlight a {
-    font-size: 0.64rem;
-}
-.md-copyright a[href*="squidfunk.github.io"] {
-    display: none;
-}
-
-/* 桌面端页眉返回首页点击区 */
-@media screen and (min-width: 76.25em) {
-    .md-header__button.md-logo {
-        position: relative;
-        z-index: 10;
-    }
-    .md-header__button.md-logo::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 400px;
-        height: 100%;
-        cursor: pointer;
-    }
-}
-
-/* 移动端页眉避让汉堡菜单逻辑 */
-@media screen and (max-width: 76.24em) {
-    .md-header__button.md-logo {
-        position: relative;
-        z-index: 10;
-    }
-    .md-header__button.md-logo::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 4rem; 
-        width: 280px;
-        height: 100%;
-        cursor: pointer;
-    }
-    [for="__drawer"] {
-        position: relative;
-        z-index: 100;
-    }
-}
-
 /* 页眉标题悬停反馈 */
 .md-header__topic:hover {
-    opacity: 0.7;
-    transition: opacity 0.2s;
+  opacity: 0.7;
+  transition: opacity 0.2s;
 }
 
 /* 正文标题加粗 */
 .md-typeset h1 {
-    font-weight: 800 !important;
+  font-weight: 800 !important;
+  color: var(--md-typeset-color) !important; /* 强制对齐正文最亮颜色 */
 }
 
+/* 增加正文与页脚之间的留白间距 */
+.md-main__inner {
+  margin-bottom: 4rem !important;
+}
+
+/* --- 2. 页眉交互逻辑 --- */
+
+/* 桌面端页眉返回首页点击区 */
+@media screen and (min-width: 76.25em) {
+  .md-header__button.md-logo {
+    position: relative;
+    z-index: 10;
+  }
+  .md-header__button.md-logo::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 400px;
+    height: 100%;
+    cursor: pointer;
+  }
+}
+
+/* 移动端页眉适配：简化逻辑，避免 Z轴 冲突 */
+@media screen and (max-width: 76.24em) {
+  .md-header__button.md-logo {
+    position: relative;
+    z-index: 10; /* 仅保留 Logo 层级，确保不被默认元素遮挡 */
+  }
+}
+
+/* --- 3. 编辑弹窗样式 --- */
 /* 编辑弹窗背景遮罩样式 */
 dialog::backdrop {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(3px);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(3px);
 }
 
 /* 编辑弹窗主体样式 */
 #edit-dialog {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0;
-    border: 1px solid var(--md-divider-color); 
-    outline: none;
-    border-radius: 12px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  border: 1px solid var(--md-divider-color);
+  outline: none;
+  border-radius: 12px;
 }
 
 /* 弹窗开启时禁用底层滚动 */
 body:has(dialog[open]) {
-    overflow: hidden;
+  overflow: hidden;
 }
 
+/* --- 4. 移动端布局适配 --- */
 /* 移动端页脚版权与图标居中对齐 */
 @media screen and (max-width: 47.9375em) {
-    .md-footer-meta__inner {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-    }
-    .md-copyright {
-        margin-bottom: 0.5rem;
-        margin-right: 0;
-    }
-    .md-social {
-        padding-left: 0;
-        margin-left: 0;
-        display: flex;
-        justify-content: center;
-    }
+  .md-footer-meta__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .md-copyright {
+    margin-bottom: 0.5rem;
+    margin-right: 0;
+  }
+  .md-social {
+    padding-left: 0;
+    margin-left: 0;
+    display: flex;
+    justify-content: center;
+  }
 }
 
-/* 全局正文字体优化 */
+/* --- 5. 全局排版与字体优化 --- */
 :root {
   /* 调整基础行高，让中文阅读更通透 */
   --md-typeset-line-height: 1.7;
 }
 
 .md-typeset {
-  /* 1. 优先使用系统原生中文黑体，最后回退到 Roboto */
+  /* 优先使用系统原生中文黑体，最后回退到 Roboto */
   font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Helvetica Neue", Arial, sans-serif, Roboto;
-  /* 2. 微调字间距，防止文字粘连 */
+  /* 微调字间距，防止文字粘连 */
   letter-spacing: 0.01em;
 }
 
@@ -123,15 +109,105 @@ body:has(dialog[open]) {
 }
 
 /* 代码块字体优化：优先使用等宽字体，并加大行高 */
-.md-typeset code, .md-typeset kbd, .md-typeset pre {
+.md-typeset code,
+.md-typeset kbd,
+.md-typeset pre {
   font-family: "JetBrains Mono", "Cascadia Code", "Consolas", "Courier New", "Roboto Mono", monospace;
   line-height: 1.5;
 }
 
-/* 解决你提到的标点符号挤压感 */
+/* 标题字体权重与间距同步优化 */
 .md-typeset :is(h1, h2, h3, h4, h5, h6) {
   letter-spacing: -0.01em;
   font-weight: 700;
-  /* 标题字体也可以同步优化 */
   font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+/* 1. 基础隐藏与容器设置 */
+.md-copyright { display: none !important; }
+.custom-footer-container { 
+  display: flex !important; 
+  justify-content: space-between !important; 
+  align-items: stretch !important; 
+  padding: 1.8rem 0 !important; 
+  min-height: 100px;
+}
+
+/* 2. 统一颜色与悬停效果协议 [要求一 & 要求五] */
+.custom-footer-container, 
+.custom-footer-container a, 
+.custom-footer-container .md-social__link { 
+  color: var(--md-footer-fg-color--light) !important; 
+  transition: color 0.25s ease, opacity 0.25s ease; 
+  text-decoration: none;
+}
+
+/* 统一悬停反馈：亮色切换 [要求一] */
+.custom-footer-container a:hover, 
+.custom-footer-container .md-social__link:hover { 
+  color: var(--md-typeset-a-color) !important; 
+  opacity: 1;
+}
+
+/* 3. 桌面端排版分层 */
+.footer-col { display: flex; flex-direction: column; justify-content: space-between; }
+.left-col { align-items: flex-start; }
+.right-col { align-items: flex-end; text-align: right; }
+
+.cc-license { font-size: 13.5px; font-weight: 700; line-height: 20px; }
+.footer-nav, .group-name { font-size: 11.5px; }
+.group-name { font-weight: 700; display: block; }
+
+/* 微调口号：锁定行高，释放 1 像素间距感 */
+.slogan { 
+  font-size: 9px; 
+  line-height: 1; 
+  margin-top: 0px; 
+} 
+
+/* 4. 桌面端间距管理 [要求二] */
+.md-social { 
+  margin: 0 !important; 
+  padding: 0 !important; 
+  display: flex; 
+  gap: 15px; 
+  height: 20px; 
+  align-items: center; 
+}
+.md-social__link { width: 18px; height: 18px; }
+.md-social__link svg { fill: currentColor; }
+
+.brand-group-wrapper { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; /* 确保口号相对于字幕组名称居中 */
+  gap: 1px; /* 品牌组内紧凑 */ 
+  margin-top: 12px; /* 与图标行拉开较大间距 */
+}
+
+/* 5. 手机端逻辑：极致间距对称优化 [要求三] */
+@media screen and (max-width: 47.9375em) { 
+  .custom-footer-container { 
+    display: flex !important; 
+    flex-direction: column !important; 
+    align-items: center !important; 
+    gap: 1.25rem !important; 
+    padding: 2.2rem 0 !important; 
+  } 
+  .footer-col { display: contents; } 
+  .footer-row-item { 
+    margin: 0 !important; 
+    line-height: 1.2 !important; 
+    display: flex; 
+    justify-content: center; 
+  } 
+  .footer-row-cc { order: 1; } 
+  .footer-row-social { order: 2; } 
+  .footer-row-nav { order: 3; } 
+  .footer-row-brand { order: 4; } 
+  /* 品牌组在手机端依然保持为一个紧凑整体 */ 
+  .brand-group-wrapper { 
+    gap: 2px !important; 
+    margin-top: 0 !important; 
+  } 
 }
