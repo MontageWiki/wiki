@@ -36,12 +36,12 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          # 安装 Material 主题 (已包含 pymdown-extensions 等核心扩展)
-          pip install mkdocs-material jieba
-          
-          # 如果你在 mkdocs.yml 的 plugins 中启用了 git-revision-date-localized
-          # 请取消下面这行的注释：
-          # pip install mkdocs-git-revision-date-localized-plugin
+          pip install \
+            mkdocs-material \
+            jieba \
+            mkdocs-git-revision-date-localized-plugin \
+            mkdocs-minify-plugin \
+            mkdocs-awesome-pages-plugin
 
       - name: Build and Push to GitHub Pages
         run: |

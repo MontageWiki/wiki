@@ -1,10 +1,11 @@
-name: "Publish: MontageWiki Encyclopedia"
+name: "Publish: MontageSubs Encyclopedia"
 
 on:
   workflow_dispatch:
+  gollum:
   schedule:
-    - cron: '27 1,7,13,19 * * *'
-
+    - cron: '11 14 * * *' 
+    
 permissions:
   contents: write
 
@@ -27,7 +28,12 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install mkdocs-material jieba
+          pip install \
+            mkdocs-material \
+            jieba \
+            mkdocs-git-revision-date-localized-plugin \
+            mkdocs-minify-plugin \
+            mkdocs-awesome-pages-plugin
 
       - name: Replay Wiki History
         id: replay
@@ -42,7 +48,7 @@ jobs:
             LAST_SYNC_SHA=""
           fi
           
-          git clone https://github.com/MontageWiki/wiki.wiki.git wiki_git
+          git clone https://github.com/MontageSubs/wiki.wiki.git wiki_git
           cd wiki_git
           
           if [ -z "$LAST_SYNC_SHA" ]; then
