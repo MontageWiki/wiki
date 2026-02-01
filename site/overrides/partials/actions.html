@@ -1,0 +1,120 @@
+<nav class="md-content__articles" style="float: right; position: relative; z-index: 100;">
+  <details class="gh-popover-details">
+    <summary class="md-content__button md-icon gh-btn" title="贡献与编辑">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1-1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"></path></svg>
+      <span class="gh-caret"></span>
+    </summary>
+
+    <div class="gh-popover-container">
+      <div class="gh-popover-box">
+        <div class="gh-header">
+          <h3>参与百科贡献</h3>
+          <p>一本众创、共建、同享的字幕百科</p>
+        </div>
+        
+        <div class="gh-content">
+          <a href="https://github.com/login?return_to={{ page.edit_url | urlencode }}" class="gh-btn-primary">
+            使用 GitHub 账号编辑
+          </a>
+          
+          <ul class="gh-links">
+            <li><a href="https://github.com/MontageWiki/wiki/wiki/百科语法指南">百科语法指南</a></li>
+            <li><a href="https://github.com/MontageWiki/wiki/wiki/GitHub-帮助指南">GitHub 帮助指南</a></li>
+            <li><a href="https://github.com/MontageWiki/wiki/wiki/贡献指南">贡献指南</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  {# 查看历史按钮保持独立 #}
+  <a href="{{ page.edit_url | replace('_edit', '_history') }}" title="查看编辑历史" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"></path></svg>
+  </a>
+</nav>
+
+<style>
+  /* 隐藏 details 默认箭头 */
+  .gh-popover-details summary::-webkit-details-marker { display: none; }
+  .gh-popover-details summary { list-style: none; outline: none; cursor: pointer; display: flex; align-items: center; }
+
+  /* 模拟 GitHub Popover 容器 */
+  .gh-popover-container {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    margin-top: 8px;
+    width: 280px;
+    z-index: 100;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,0.15));
+  }
+
+  /* 弹出框主体 */
+  .gh-popover-box {
+    background: var(--md-default-bg-color);
+    border: 1px solid var(--md-divider-color);
+    border-radius: 6px;
+    overflow: hidden;
+    color: var(--md-default-fg-color);
+  }
+
+  /* 弹出框小三角 */
+  .gh-popover-container::before {
+    content: "";
+    position: absolute;
+    top: -8px;
+    right: 12px;
+    border-width: 0 8px 8px 8px;
+    border-style: solid;
+    border-color: transparent transparent var(--md-divider-color) transparent;
+  }
+  .gh-popover-container::after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    right: 12px;
+    border-width: 0 8px 8px 8px;
+    border-style: solid;
+    border-color: transparent transparent var(--md-default-bg-color) transparent;
+  }
+
+  /* 内部样式 */
+  .gh-header { padding: 16px; background: var(--md-default-bg-color--lightest); border-bottom: 1px solid var(--md-divider-color); }
+  .gh-header h3 { margin: 0; font-size: 14px; font-weight: 600; }
+  .gh-header p { margin: 4px 0 0; font-size: 12px; opacity: 0.7; }
+  
+  .gh-content { padding: 16px; }
+  .gh-btn-primary {
+    display: block;
+    background-color: #1f883d;
+    color: white !important;
+    text-align: center;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid rgba(27,31,35,0.15);
+  }
+  .gh-btn-primary:hover { background-color: #1a7a35; }
+
+  .gh-links { margin: 12px 0 0; padding: 0; list-style: none; border-top: 1px solid var(--md-divider-color); }
+  .gh-links li a {
+    display: block;
+    padding: 8px 0;
+    font-size: 13px;
+    color: var(--md-typeset-a-color);
+    text-decoration: none;
+  }
+  .gh-links li a:hover { text-decoration: underline; }
+
+  /* 遮罩层：点击空白处关闭（可选） */
+  .gh-popover-details[open] > summary::before {
+    content: " ";
+    position: fixed;
+    top: 0; right: 0; bottom: 0; left: 0;
+    cursor: default;
+    z-index: 90;
+    background: transparent;
+  }
+</style>
