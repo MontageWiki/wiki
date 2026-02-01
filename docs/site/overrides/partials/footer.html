@@ -1,0 +1,42 @@
+<footer class="md-footer">
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid custom-footer-container">
+      
+      <div class="footer-col left-col">
+        <div class="footer-row-item footer-row-cc">
+          <span class="cc-license">百科文字内容在 <a href="/wiki/CC-BY-SA-4.0许可证">CC BY-SA 4.0</a> 许可下提供</span>
+        </div>
+        <div class="footer-row-item footer-row-nav">
+          <nav class="footer-nav">
+            <a href="/wiki/关于我们">关于我们</a> <span class="nav-sep">|</span>
+            <a href="/wiki/隐私政策">隐私政策</a> <span class="nav-sep">|</span>
+            <a href="/wiki/服务协议">服务协议</a> <span class="nav-sep">|</span>
+            <a href="/wiki/参与贡献">参与贡献</a>
+          </nav>
+        </div>
+      </div>
+
+      <div class="footer-col right-col">
+        <div class="footer-row-item footer-row-social md-social">
+          {% if config.extra.social %}
+            {% for social in config.extra.social %}
+              <a href="{{ social.link }}" target="_blank" rel="noopener" class="md-social__link">
+                {% if loop.first %}
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 25.5-20.6 46.1-46.1 46.1H354.1V333.8h-132.2v160.1H73.6c-25.5 0-46.1-20.6-46.1-46.1l.7-160.2H32c-18 0-32-14.1-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-10 24-10s17 3 24 10l251.4 223.5c7 7 10 15 10 24z"></path></svg>
+                {% else %}
+                  {% include ".icons/" ~ social.icon ~ ".svg" %}
+                {% endif %}
+              </a>
+            {% endfor %}
+          {% endif %}
+        </div>
+        
+        <div class="footer-row-item footer-row-brand brand-group-wrapper">
+          <a href="https://montagesubs.github.io/" class="group-name">蒙太奇字幕组 (MontageSubs)</a>
+          <span class="slogan">用爱发电 ❤️ Powered by Love</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</footer>
