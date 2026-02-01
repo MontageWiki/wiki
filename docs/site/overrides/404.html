@@ -1,0 +1,71 @@
+{% extends "main.html" %}
+
+{% block content %}
+<article class="md-content__inner md-typeset" style="text-align: center; margin-top: 4rem; max-width: 100%; padding: 0 1rem;">
+    <h1 style="font-weight: 800; margin-bottom: 2rem;">404 - 此条目尚不存在</h1>
+    
+    <div id="type-wrapper" style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 2.5rem; overflow: hidden;">
+        <p id="line-1" class="type-line" style="color: var(--md-default-fg-color--light); font-size: 0.85rem; line-height: 1.6;">字幕始于空白的轴线，百科成于点滴的积累。</p>
+        <p id="line-2" class="type-line" style="font-weight: 600; font-size: 1.1rem; color: var(--md-default-fg-color); margin: 0;">何不亲手填补这块空白？</p>
+        <span id="cursor"></span>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; align-items: center;">
+      <a id="gh-create-btn" href="https://github.com/login?return_to=https%3A//github.com/MontageSubs/wiki/wiki/_new" class="gh-btn-primary">使用 GitHub 创建此条目</a>
+      <a href="{{ '' | url }}" class="gh-btn-secondary">返回首页</a>
+    </div>
+</article>
+
+<style>
+    .type-line { display: inline-block; text-align: left; white-space: nowrap; position: relative; min-height: 1.5em; }
+    .gh-btn-primary, .gh-btn-secondary { width: 280px; padding: 12px; border-radius: 6px; text-align: center; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: block; border: 1px solid rgba(27, 31, 35, 0.15); transition: opacity 0.2s; }
+    .gh-btn-primary { background-color: #1f883d; color: #ffffff !important; }
+    .gh-btn-primary:hover { opacity: 0.9; }
+    .gh-btn-secondary { background-color: #f6f8fa; color: #24292f !important; }
+    [data-md-color-scheme="slate"] .gh-btn-secondary { background-color: #212830; color: #adbac7 !important; border-color: #444c56; }
+    
+    #cursor { display: inline-block; width: 2px; height: 1.1em; background-color: var(--md-default-fg-color); vertical-align: middle; margin-left: 4px; animation: blink 0.8s infinite; visibility: hidden; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+</style>
+
+<script>
+    (function() {
+      // 1. 链接逻辑
+      const name = window.location.pathname.split('/').filter(Boolean).pop() || "";
+      if (name && name !== "wiki") {
+        const target = `https://github.com/MontageSubs/wiki/wiki/${name}`;
+        document.getElementById('gh-create-btn').href = `https://github.com/login?return_to=${encodeURIComponent(target)}`;
+      }
+
+      // 2. 键入动画核心逻辑
+      const wrapper = document.getElementById('type-wrapper');
+      const cur = document.getElementById('cursor');
+      const lines = [document.getElementById('line-1'), document.getElementById('line-2')];
+      
+      // 第一步：在清空前锁定整体容器高度和每一行的宽度
+      wrapper.style.height = wrapper.offsetHeight + 'px'; 
+      const content = lines.map(el => {
+        el.style.width = el.offsetWidth + 'px';
+        const txt = el.textContent.trim();
+        el.textContent = '';
+        return txt;
+      });
+
+      async function type(idx) {
+        if (idx >= lines.length) return;
+        const el = lines[idx];
+        el.appendChild(cur);
+        cur.style.visibility = 'visible';
+
+        for (const char of content[idx]) {
+          el.insertBefore(document.createTextNode(char), cur);
+          const delay = /[，。？！,.?!]/.test(char) ? 450 : 70;
+          await new Promise(r => setTimeout(r, delay));
+        }
+        setTimeout(() => type(idx + 1), 400);
+      }
+
+      setTimeout(() => type(0), 500);
+    })();
+</script>
+{% endblock %}
