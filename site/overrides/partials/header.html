@@ -1,0 +1,162 @@
+{% set repo_url = "https://github.com/MontageSubs/wiki" %}
+{% set target_new_url = repo_url ~ "/wiki/_new" %}
+{% set login_new_url = "https://github.com/login?return_to=" ~ (target_new_url | urlencode) %}
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="{{ lang.t('header.title') }}">
+    <a href="{{ config.site_url | default(nav.homepage.url, true) | url }}" title="{{ config.site_name }}" class="md-header__button md-logo" aria-label="{{ config.site_name }}" data-md-component="logo">
+      {% include "partials/logo.html" %}
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      {% include ".icons/material/menu.svg" %}
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">{{ config.site_name }}</span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">{% if page and page.title %}{{ page.title }}{% endif %}</span>
+        </div>
+      </div>
+    </div>
+    <div class="hd-action-wrapper">
+      <input type="checkbox" id="hd-action-toggle" autocomplete="off" hidden aria-hidden="true">
+      <label for="hd-action-toggle" class="hd-overlay-mask"></label>
+      <div class="hd-action-container">
+        <label for="hd-action-toggle" class="md-header__button md-icon" title="新增条目">
+          {% include ".icons/material/plus.svg" %}
+        </label>
+        <aside class="hd-popup-menu" aria-hidden="true">
+          <div class="hd-popup-arrow"></div>
+          <div class="hd-popup-box">
+            <div class="hd-popup-header">
+              <strong>参与百科贡献</strong>
+              <p>一本众创、共建、同享的字幕百科</p>
+            </div>
+            <div class="hd-popup-body">
+              <a href="{{ login_new_url }}" class="hd-btn-github" target="_blank" rel="noopener">使用 GitHub 创建新条目</a>
+              <nav class="hd-links-nav">
+                <a href="{{ '百科语法指南/' | url }}">百科语法指南</a>
+                <a href="{{ 'GitHub-帮助指南/' | url }}">GitHub 帮助指南</a>
+                <a href="{{ '贡献指南/' | url }}">贡献指南</a>
+              </nav>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+    <form class="md-header__option" data-md-component="palette">
+      {% for option in config.theme.palette %}
+        {% set primary = option.primary | replace(" ", "-") | lower %}
+        {% set accent  = option.accent  | replace(" ", "-") | lower %}
+        <input class="md-option" data-md-color-media="{{ option.media }}" data-md-color-scheme="{{ option.scheme }}" data-md-color-primary="{{ primary }}" data-md-color-accent="{{ accent }}" {% if option.toggle %} aria-label="{{ option.toggle.name }}" {% else %} aria-hidden="true" {% endif %} type="radio" name="__palette" id="__palette_{{ loop.index }}">
+        {% if option.toggle %}
+          <label class="md-header__button md-icon" title="{{ option.toggle.name }}" for="__palette_{{ loop.index0 or loop.length }}" hidden>
+            {% include ".icons/" ~ option.toggle.icon ~ ".svg" %}
+          </label>
+        {% endif %}
+      {% endfor %}
+    </form>
+    <label class="md-header__button md-icon" for="__search">
+      {% include ".icons/material/magnify.svg" %}
+    </label>
+    <div class="md-search" data-md-component="search" role="dialog">
+      {% include "partials/search.html" %}
+    </div>
+    {% if config.repo_url %}
+      <div class="md-header__source">
+        {% include "partials/source.html" %}
+      </div>
+    {% endif %}
+  </nav>
+</header>
+
+<style>
+  .hd-action-wrapper { position: relative; display: flex; align-items: center; }
+  .md-header__option { margin-right: 12px; }
+  #hd-action-toggle:checked ~ .hd-action-container .hd-popup-menu { display: block; }
+  #hd-action-toggle:checked ~ .hd-overlay-mask { display: block; }
+  .hd-overlay-mask {
+    display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 100; background: transparent;
+  }
+  .hd-popup-menu {
+    display: none; position: absolute; top: 100%; right: -12px;
+    margin-top: 8px; width: 260px; z-index: 101;
+    filter: drop-shadow(0 12px 30px rgba(0,0,0,0.15));
+    animation: popup-anim-desktop 0.2s ease-out;
+  }
+  .hd-popup-arrow {
+    position: absolute; top: -6px; right: 30px; 
+    width: 12px; height: 12px;
+    background: var(--md-default-bg-color);
+    border-top: 1px solid var(--md-divider-color);
+    border-left: 1px solid var(--md-divider-color);
+    transform: rotate(45deg); z-index: 102;
+  }
+  [data-md-color-scheme="slate"] .hd-popup-arrow { background: #2e323e; }
+  .hd-popup-box {
+    background: var(--md-default-bg-color); border: 1px solid var(--md-divider-color);
+    border-radius: 12px; overflow: hidden; position: relative; z-index: 103;
+    padding: 18px; line-height: normal;
+  }
+  [data-md-color-scheme="slate"] .hd-popup-box { background: #2e323e; }
+  .hd-popup-header strong { display: block; font-size: 0.8rem; color: var(--md-default-fg-color); text-align: center; }
+  .hd-popup-header p { margin: 6px 0 0; font-size: 0.65rem; color: var(--md-default-fg-color--light); line-height: 1.4; text-align: center; }
+  .hd-btn-github {
+    display: block; text-align: center; padding: 10px; border-radius: 6px;
+    font-size: 0.75rem; font-weight: 600; text-decoration: none;
+    margin-top: 20px; background-color: #1f883d; color: #fff !important;
+  }
+  .hd-btn-github:hover { background-color: #1c8139; }
+  .hd-btn-github:active { background-color: #197935; }
+  [data-md-color-scheme="slate"] .hd-btn-github { background-color: #238636; }
+  [data-md-color-scheme="slate"] .hd-btn-github:hover { background-color: #29903b; }
+  [data-md-color-scheme="slate"] .hd-btn-github:active { background-color: #2e9a40; }
+  .hd-links-nav {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid var(--md-divider-color);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .hd-links-nav a {
+    display: block;
+    padding: 4px 0;
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--md-default-fg-color);
+    text-decoration: none;
+  }
+  .hd-links-nav a:hover {
+    color: var(--md-accent-fg-color);
+    background-color: var(--md-default-bg-color--lightest);
+    border-radius: 4px;
+  }
+  @keyframes popup-anim-desktop {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media screen and (max-width: 480px) {
+    .hd-overlay-mask { background: rgba(0, 0, 0, 0.4); display: none; }
+    #hd-action-toggle:checked ~ .hd-overlay-mask { display: block; }
+    .hd-popup-menu {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      right: auto;
+      width: 85vw;
+      max-width: 320px;
+      margin: 0;
+      transform: translate(-50%, -50%);
+      animation: popup-anim-mobile 0.25s cubic-bezier(0.1, 0.7, 0.1, 1);
+    }
+    .hd-popup-arrow { display: none; }
+  }
+  @keyframes popup-anim-mobile {
+    from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  }
+</style>
